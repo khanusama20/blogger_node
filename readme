@@ -1,0 +1,76 @@
+-------
+GraphQL
+-------
+
+Differents type of graphQL versions
+-----------------------------------
+1) graphql-yoga
+2) apollo-server-express
+3) apollo-server
+----------------
+	1. Apollo Server is the best way to quickly build a production-ready, self-documenting API for GraphQL clients, using data from any source.
+
+	2. It’s open-source and works great as a stand-alone server, an addon to an existing Node.js HTTP server, or in “serverless” environments.
+
+4) express-graphql
+
+
+# When we want to use Apollo GraphQL
+
+Configuring Apollo GraphQL
+--------------------------
+
+npm install --save apollo-server-express 
+npm install --save body-parser 
+npm install --save graphql 
+npm install --save graphql-tools 
+npm install --save lodash
+
+Important
+---------
+
+A /graphql endpoint which will be the entrypoint for our GraphQL API
+A /graphiql endpoiont which contains a visual GraphQL tester to test out the API
+
+
+graphql-tools 
+-------------
+
+What is graphql-tools?
+The Answer is my own opion. Normally it returns a function which helps, make executable schema. it takes one parameter in object formate.
+ 
+What is a resolver?
+-------------------
+Resolvers provide the instructions for turning a GraphQL operation (a query, mutation, or subscription) into data. They either return the 
+same type of data we specify in our schema or a promise for that data.
+
+Before we can start writing resolvers, we need to learn more about what a resolver function looks like. Resolver functions accept four arguments:
+
+fieldName: (parent, args, context, info) => data
+
+parent: An object that contains the result returned from the resolver on the parent type
+
+args: An object that contains the arguments passed to the field
+
+context: An object shared by all resolvers in a GraphQL operation. We use the context to contain per-request 
+state such as authentication information and access our data sources.
+
+info: Information about the execution state of the operation which should only be used in advanced cases
+
+
+What is scaler type?
+-------------------
+A scalar type is a primitive type like ID, String, Boolean, or Int. You can think of scalars as the leaves of your graph 
+that all fields resolve to. GraphQL has many scalars built in, and you can also define custom scalars like Date.
+
+Explore your schema
+------------------
+By default, Apollo Server supports GraphQL Playground. The Playground is an interactive, in-browser GraphQL IDE for exploring 
+your schema and testing your queries. 
+
+Note: Apollo Server automatically serves GraphQL Playground in development only.
+
+The GraphQL Playground provides the ability to introspect your schema. Introspection is a technique used to provide detailed 
+information about a graph’s schema. To see this in action, check out the right hand side of GraphQL Playground and click on 
+the schema button.
+
