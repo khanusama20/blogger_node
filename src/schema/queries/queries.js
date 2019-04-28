@@ -46,6 +46,9 @@ module.exports = {
         }
     },
     fetchSingleDeveloper: async function(parent, args) {
+        log.info('fetchSingleDeveloper', args);
+        log.info('queries.js');
+
         let developer = _modules_.developer;
         let result = {};
         let developer_code = args['developer_code'];
@@ -58,15 +61,40 @@ module.exports = {
 
             if (result.length === 0) {
                 log.info('Sorry! we are not found any records');
-                return utils.updateResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.NOT_FOUND, result);
+                return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.NOT_FOUND, result);
             } else {
                 log.info('Developer is found successfully');
                 result = { developer: result[0]};
-                return utils.updateResponse(200, true, 'Developer is found successfully', ERROR_CODE.FOUND, result);   
+                return utils.sendResponse(200, true, 'Developer is found successfully', ERROR_CODE.FOUND, result);   
             }
         } catch(Exception) {
             log.error(Exception);
-            return utils.updateResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.DATABASE_ERROR, result);
+            return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.DATABASE_ERROR, result);
+        }
+    },
+    fetchAllDevelopers: async function(parent, args) {
+
+        log.info('fetchAllDevelopers', args);
+        log.info('queries.js');
+
+        let developer = _modules_.developer;
+        let result = {};
+        try {
+            _modules_._mongo_.connect();
+            result = await developer.find({}).lean();
+            _modules_._mongo_.close();
+
+            if (result.length === 0) {
+                log.info('Sorry! we are not found any records');
+                return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.NOT_FOUND, result);
+            } else {
+                log.info('Developers found successfully');
+                let _result_ = { developer: result };
+                return utils.sendResponse(200, true, 'Developers found successfully', ERROR_CODE.FOUND, _result_);   
+            }
+        } catch(Exception) {
+            log.error(Exception);
+            return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.DATABASE_ERROR, result);
         }
     }
 }

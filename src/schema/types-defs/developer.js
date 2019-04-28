@@ -1,5 +1,9 @@
 module.exports = {
     type: `
+        type ProgrammingExpert {
+
+        }
+
         type Developer {
             _id: ID!
             firstName: String!
@@ -12,6 +16,7 @@ module.exports = {
             profile_picture: String!
             state: String!
             city: String!
+            developer_type: String!
             date_of_joining: String!
             no_of_times_login: String!
             date_of_birth: String
@@ -23,6 +28,14 @@ module.exports = {
             message: String!
             errCode: Int!
             developer: Developer
+        }
+
+        type AllDevelopers implements Response {
+            code: String!
+            success: Boolean!
+            message: String!
+            errCode: Int!
+            developer: [Developer]
         }
     `,
 
@@ -39,7 +52,8 @@ module.exports = {
             state: String!
             city: String!
             date_of_joining: String!
-            date_of_birth: String
+            date_of_birth: String!
+            developer_type: String!
         }
         
         input UpdateDeveloperDetails {
@@ -52,10 +66,11 @@ module.exports = {
             city: String!
             date_of_joining: String!
             date_of_birth: String!
+            developer_type: String!
         }
     `,
     queries: `
-        fetchAllDevelopers: [Developer]!
+        fetchAllDevelopers: AllDevelopers!
         fetchSingleDeveloper(developer_code: String!): DeveloperResponse!
         deleteSingleDeveloper(developer_code: String!): Developer!
         developerLogin(email: String!, password: String!): Developer!

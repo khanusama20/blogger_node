@@ -73,12 +73,17 @@ module.exports = {
         document = Object.assign({_id: _id}, document);
         return document;
     },
-    updateResponse(statusCode, success, message, errCode, result) {
+    sendResponse(statusCode, success, message, errCode, result) {
         return Object.assign({
             code: statusCode,
             message: message,
             success: success,
             errCode: errCode,
         }, result);
+    },
+    isInvalidCharacterFound() {
+        
     }
+    
+    
 }
