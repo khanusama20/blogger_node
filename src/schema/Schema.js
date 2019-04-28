@@ -18,14 +18,14 @@ const resolvers = require('./resolvers.js');
 const apolloServer = new ApolloServer({
     typeDefs: typeDefs,
     resolvers: resolvers,
-    formatError: error => {
-        console.log(error);
-        return {
-            message: error.originalError.data || "Duplication of records",
-            status: error.originalError.code,
-            timeStamp: new Date(Date.now())
-        }
-    },
+    // formatError: error => {
+    //     console.log('Error Handling', error);
+    //     return {
+    //         message: error.originalError.data,
+    //         status: error.originalError.code,
+    //         timeStamp: new Date(Date.now())
+    //     }
+    // },
     playground: {
         endpoint: `http://localhost:8089/graphql`,
         settings: {

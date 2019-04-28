@@ -20,9 +20,7 @@ module.exports = {
         }
     `,
     queries: `
-        fetchAllUsers: User
-    `,
-    mutations: `
-        signup(newUser: SignUp): User
+        fetchAllUsers: [User]!
+        user_login(email: String!, password: String!): User!
     `
 }

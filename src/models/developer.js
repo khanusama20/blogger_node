@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-var User = new mongoose.Schema({
+var Developer = new mongoose.Schema({
     firstName: {
         type: String,
         required: true
@@ -9,16 +9,22 @@ var User = new mongoose.Schema({
         type: String,
         required: true
     },
-    salt: {
-        type: String
+    developer_code: {
+        type: String,
+        unique: true,
+        required: true
     },
-    locKey: {
+    private_key: {
         type: String,
         required: true
     },
     temporary: {
         type: Boolean,
         default: true
+    },
+    public_key: {
+        type: String,
+        required: true
     },
     email: {
         type: String,
@@ -30,7 +36,7 @@ var User = new mongoose.Schema({
         default: null,
         unique: true
     },
-    sex: {
+    gender: {
         type: String,
         default: null
     },
@@ -50,9 +56,25 @@ var User = new mongoose.Schema({
         type: String,
         default: null
     },
+    date_of_joining: {
+        type: String,
+        default: null
+    },
+    no_of_times_login: {
+        type: Number,
+        default: 0
+    },
+    date_of_birth: {
+        type: String,
+        default: null
+    },
+    age: {
+        type: String,
+        default: 0
+    }
 }, {
     versionKey: false,
     timestamps: true
 });
 
-module.exports = mongoose.model('User', User);
+module.exports = mongoose.model('Developer', Developer);

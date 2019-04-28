@@ -4,7 +4,7 @@ console.log(_mFile);
 
 module.exports = {
     generatePassword() {
-        var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOP1234567890";
+        var chars = "abcdefotwxvzsumnrk0123456789";
         var pass = "";
         var passLength = 10;
         for (var x = 0; x < passLength; x++) {
@@ -14,7 +14,7 @@ module.exports = {
         return pass;
     },
 
-    genSalt(howMany = 8, key = '1234567890abcdef') {
+    genSalt(howMany = 6, key = 'abcdefotwxvzsumnrk0123456789') {
         let salt = '';
         for (let x = 0; x < howMany; x++) {
             salt += key.charAt(Math.floor(Math.random() * key.length));
@@ -25,10 +25,8 @@ module.exports = {
     catchError(message, status) {
         const errorBox = [];
         errorBox.push(message)
-        const error = new Error();
-        error.data = errorBox[0];
-        error.code = status;
-        console.log('Error : ', error);
+        let error = new Error();
+        error = Object.assign({data: errorBox[0], code: status}, error);
         throw error;
     },
 
@@ -68,5 +66,19 @@ module.exports = {
             statusCode = 1;       // When any alphabets are found then it breaks the loop and returns 1 for failed
         }   
         return statusCode;
+    },
+    appendId(document) {
+        let _id = document._id.toString();
+        delete document._id;
+        document = Object.assign({_id: _id}, document);
+        return document;
+    },
+    updateResponse(statusCode, success, message, errCode, result) {
+        return Object.assign({
+            code: statusCode,
+            message: message,
+            success: success,
+            errCode: errCode,
+        }, result);
     }
 }

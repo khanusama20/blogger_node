@@ -1,85 +1,52 @@
-const _mongo_ = require('../../../mongo-connect');
-const util = require('../../utils/utility');
-const async = require('async');
-
-import { FIELDS_NOT_FOUND, SERVER_ERROR, DATABASE_ERROR, USER_EXIST } from '../../error-codes'
-
-// Models
-const User = require('../../models/User');
-
-// Mongoose callback convert to promise
-const mongoose = require('mongoose');
+const _modules_ = require('../../../modules');
+const mongoose = _modules_.mongoose;
 mongoose.Promise = require('bluebird');
 
+let log = _modules_.log.log
+
 module.exports = {
-    signup: async (_A, args) => {
-        let errors = [];
-        let field_regex = new RegExp('^(firstName|lastName|email|contact)$');
+    createNewDeveloper: async (_A, args) => {
         
-        for(let _props in args) {
-            if (field_regex.test(_props)) {
-                if (args[_props] == "" || args[_props] == null || args[_props] == undefined ) {
-                    util.catchError('Mandatory fields are empty', FIELDS_NOT_FOUND);
-                }
-            }
-        }
+        let Developer = _modules_.developer;
+        let developer_age = 23;
+
 
         /**
-         * email should be unique
+         * 
          */
-
-        let email = args.newUser.email;
-
-        async.series([
-            function(callback) {
-                _mongo_.connect();
-
-                User.find({"email": email})
-                .lean()
-                .exec(function(err, user_docs) {
-                    if (err) {
-                        console.log(err);
-                        util.catchError('Database error', DATABASE_ERROR);
-                        // return;
-                    }
-
-                    if (user_docs.length > 0) {
-                        console.log('This email is already used');
-                        util.catchError('This email is already used', USER_EXIST);
-                        // return;
-                    }
-
-                    console.log('Data : ', user_docs);
-                    callback(null, null);
-                });
-            },
-
-            function(callback) {
-                
-                let user = new User({
-                    firstName: args.newUser.firstName,
-                    lastName: args.newUser.lastName,
-                    salt: util.genSalt(),
-                    locKey: util.generatePassword(),
-                    email: args.newUser.email,
-                    contact: args.newUser.contact,
-                    sex: args.newUser.sex
-                });
-
-                user.save(function(_error, _new_user) {
-                    if(_error) {
-                        console.log(_error);
-                        util.catchError('Database error', DATABASE_ERROR);
-                        // return;
-                    }
-                    callback(null, _new_user);
-                });
-            },
-
-        ], function(error, result) {
-            console.log('User created  ' , result[0]);
-            _mongo_.close();
-            return result[0]
+        _modules_._mongo_.connect();            // create a connection
+        log.info("Connected to MongoDatabase");
+        let new_developer = new Developer({
+            firstName: args.developer.firstName,
+            lastName: args.developer.lastName,
+            developer_code: args.developer.developer_code,
+            private_key: _modules_.util.generatePassword(),
+            public_key: _modules_.util.genSalt(),
+            email: args.developer.email,
+            contact: args.developer.contact,
+            gender: args.developer.gender,
+            active: args.developer.active,
+            profile_picture: args.developer.profile_picture,
+            state: args.developer.state,
+            city: args.developer.city,
+            date_of_joining: args.developer.date_of_joining,
+            date_of_birth: args.developer.date_of_birth,
+            age: developer_age,
         });
-    }
+
+
+        let result;
+        try {
+            result = await new_developer.save();
+            if (result === null || result === "" || result.length === 0 || Object.keys(result).length === 0) {
+                log.info('Sorry! process failed', result);
+            } else {
+                _modules_._mongo_.close();            // create a connection
+                log.info("Connection closed successfully");
+                return result;
+            }
+        } catch(Exception) {
+            log.error('Exception ' , result);
+        }    
+    }   
 }
