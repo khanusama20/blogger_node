@@ -1,9 +1,5 @@
 module.exports = {
     type: `
-        type ProgrammingExpert {
-
-        }
-
         type Developer {
             _id: ID!
             firstName: String!

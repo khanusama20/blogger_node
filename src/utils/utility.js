@@ -81,9 +81,5 @@ module.exports = {
             errCode: errCode,
         }, result);
     },
-    isInvalidCharacterFound() {
-        
-    }
-    
-    
+    // isInvalidCharacterFound() {}
 }
