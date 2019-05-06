@@ -15,6 +15,9 @@ const resolvers = require('./resolvers.js');
  * ApolloError
  */
 
+const IP_ADDRESS = process.env.HOST || '127.0.0.1';
+const PORT = process.env.PORT;
+
 const apolloServer = new ApolloServer({
     typeDefs: typeDefs,
     resolvers: resolvers,
@@ -27,7 +30,7 @@ const apolloServer = new ApolloServer({
     //     }
     // },
     playground: {
-        endpoint: `http://localhost:8089/graphql`,
+        endpoint: `http://${IP_ADDRESS}:${PORT}/graphql`,
         settings: {
             'editor.theme': 'dark'
         }

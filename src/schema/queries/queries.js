@@ -15,36 +15,36 @@ let utils = _modules_.util;
 const ERROR_CODE = _modules_.ERR_CODE
 
 module.exports = {
-    fetchAllUsers: async function(parent, args) {
-        console.log('Query : fetchAllUsers');
-        _mongo_.connect();
-        try {
-            let users = await User.find({}).lean();
-            _mongo_.close();
-            return users;
-        } catch(Exception) {
-            console.log(Exception);
-        }
-    },
-    user_login: async function(parent, args) {
-        console.log('Query : user_login');
-        console.log(args);
-        _mongo_.connect();
-        try {
-            let O_auth = await User.find({"$and": [
-                {"email": args['email']},
-                {"locKey": args['password']}
-            ]}).lean();
-            if (O_auth.length === 0) {
-                throw Error('Sorry! User not register yet');
-            } else {
-                _mongo_.close();
-                return O_auth;
-            }
-        } catch(Exception) {
-            console.log(Exception);
-        }
-    },
+    // fetchAllUsers: async function(parent, args) {
+    //     console.log('Query : fetchAllUsers');
+    //     _mongo_.connect();
+    //     try {
+    //         let users = await User.find({}).lean();
+    //         _mongo_.close();
+    //         return users;
+    //     } catch(Exception) {
+    //         console.log(Exception);
+    //     }
+    // },
+    // user_login: async function(parent, args) {
+    //     console.log('Query : user_login');
+    //     console.log(args);
+    //     _mongo_.connect();
+    //     try {
+    //         let O_auth = await User.find({"$and": [
+    //             {"email": args['email']},
+    //             {"locKey": args['password']}
+    //         ]}).lean();
+    //         if (O_auth.length === 0) {
+    //             throw Error('Sorry! User not register yet');
+    //         } else {
+    //             _mongo_.close();
+    //             return O_auth;
+    //         }
+    //     } catch(Exception) {
+    //         console.log(Exception);
+    //     }
+    // },
     fetchSingleDeveloper: async function(parent, args) {
         log.info('fetchSingleDeveloper', args);
         log.info('queries.js');

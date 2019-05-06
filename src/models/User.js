@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
-
+/// Admin user who can create bugs, analize the report also he can create a new developer profile, access developer profile etc.
 var User = new mongoose.Schema({
     firstName: {
+        type: String,
+        required: true
+    },
+    admin_id: {
         type: String,
         required: true
     },
@@ -9,18 +13,14 @@ var User = new mongoose.Schema({
         type: String,
         required: true
     },
-    salt: {
+    public_key: {
         type: String
     },
-    locKey: {
+    private_key: {
         type: String,
         required: true
     },
-    temporary: {
-        type: Boolean,
-        default: true
-    },
-    email: {
+    userName: {
         type: String,
         required: true,
         unique: true
@@ -30,7 +30,7 @@ var User = new mongoose.Schema({
         default: null,
         unique: true
     },
-    sex: {
+    gender: {
         type: String,
         default: null
     },
