@@ -1,6 +1,5 @@
 npm-debug.log
 public/*
-.env
 .git/
 dist/
 node_modules/
