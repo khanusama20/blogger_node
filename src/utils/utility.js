@@ -1,6 +1,7 @@
-var path = require('path');
-let _mFile = path.dirname(__dirname);
-console.log(_mFile);
+// let path = require('path');
+// let _mFile = path.dirname(__dirname);
+// console.log(_mFile);
+let crypto = require('crypto');
 
 module.exports = {
     generatePassword() {
@@ -81,5 +82,11 @@ module.exports = {
             errCode: errCode,
         }, result);
     },
-    // isInvalidCharacterFound() {}
+    
+    hash(plainText, public_key) {
+        let data = plainText.concat(public_key);
+        let hash_algo = crypto.createHash('sha1');
+        hash_algo.update(data + '', 'ascii')
+        return hash_algo.digest('hex');
+    }
 }

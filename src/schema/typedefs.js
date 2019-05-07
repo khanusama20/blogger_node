@@ -28,6 +28,7 @@ const typeDefs = gql`
 
     type Mutation {
         ${developer.mutations}
+        ${user.mutations}
     }
 `;
 // Exports

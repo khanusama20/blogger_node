@@ -4,7 +4,7 @@ const util = require('../../utils/utility');
 const _modules_ = require('../../../modules')
 
 // Models
-const User = require('../../models/User');
+// const User = require('../../models/User');
 
 // Mongoose callback convert to promise
 const mongoose = require('mongoose');

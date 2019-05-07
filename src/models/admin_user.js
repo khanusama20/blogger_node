@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 /// Admin user who can create bugs, analize the report also he can create a new developer profile, access developer profile etc.
-var User = new mongoose.Schema({
+var AdminUser = new mongoose.Schema({
     firstName: {
         type: String,
         required: true
@@ -55,4 +55,4 @@ var User = new mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('User', User);
+module.exports = mongoose.model('AdminUser', AdminUser);

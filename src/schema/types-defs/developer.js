@@ -72,7 +72,7 @@ module.exports = {
         developerLogin(email: String!, password: String!): Developer!
     `,
     mutations: `
-        createNewDeveloper(developer: NewDeveloperAccount): Developer!
-        updateDeveloperDetails(developer: UpdateDeveloperDetails): Developer!
+        createNewDeveloper(developer: NewDeveloperAccount): DeveloperResponse!
+        updateDeveloperDetails(developer: UpdateDeveloperDetails): DeveloperResponse!
     `
 }

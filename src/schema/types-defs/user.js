@@ -1,6 +1,6 @@
 module.exports = {
     type: `
-        type User {
+        type AdminUser {
             _id: ID!
             admin_id: String!
             firstName: String!
@@ -13,10 +13,18 @@ module.exports = {
             state: String!
             city: String!
         }
+
+        type AdminUserResponse implements Response {
+            code: String!
+            success: Boolean!
+            message: String!
+            errCode: Int!
+            adminUser: AdminUser
+        }
     `,
 
     input: `
-        input SignUp {
+        input NewAdminUser {
             admin_id: String!
             firstName: String!
             lastName: String!
@@ -30,5 +38,8 @@ module.exports = {
         }
     `,
     queries: `
+    `,
+    mutations: `
+        createNewAdminUser(formData: NewAdminUser): AdminUserResponse!
     `
 }
