@@ -71,6 +71,10 @@ var Developer = new mongoose.Schema({
     age: {
         type: String,
         default: 0
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
     }
 }, {
     versionKey: false,

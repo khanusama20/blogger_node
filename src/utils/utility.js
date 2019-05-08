@@ -88,5 +88,34 @@ module.exports = {
         let hash_algo = crypto.createHash('sha1');
         hash_algo.update(data + '', 'ascii')
         return hash_algo.digest('hex');
+    },
+
+    isValidString(text) {
+        let split_text = text.split('');
+        let bool = true;
+        for(let element of split_text) {
+            if (!isNaN(element)) {
+                bool = false;
+                break;
+            } else if (this.isSymbol(element) === true) {
+                bool = false;
+                break;
+            }
+        }
+        return bool;
+    },
+
+    isSymbol(character) {
+        let symbols = ['1', '~', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '=', '[', ']', '|', '{', '}',
+        ':', ';', '"', '?', '>', '<', '/', '.']
+
+        let bool = false;
+        for (let i = 0; i < symbols.length; i++) {
+            if (character === symbols[i]) {
+                bool = true;
+                break;
+            }
+        }
+        return bool
     }
 }

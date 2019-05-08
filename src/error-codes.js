@@ -5,6 +5,7 @@ const USER_EXIST = 305
 const USER_FAILED = 603
 const NOT_FOUND = 567
 const FOUND = -1
+const INVALID_INPUT = 489
 
 module.exports =  {
     FIELDS_NOT_FOUND: FIELDS_NOT_FOUND,
@@ -13,5 +14,6 @@ module.exports =  {
     USER_EXIST: USER_EXIST,
     USER_FAILED: USER_FAILED,
     NOT_FOUND: NOT_FOUND,
-    FOUND: FOUND
+    FOUND: FOUND,
+    INVALID_INPUT: INVALID_INPUT
 }
