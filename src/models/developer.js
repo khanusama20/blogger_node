@@ -74,6 +74,12 @@ var Developer = new mongoose.Schema({
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'AdminUser',
+        required: true
+    },
+    updatedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'AdminUser',
         required: true
     }
 }, {

@@ -16,6 +16,8 @@ module.exports = {
             date_of_joining: String!
             no_of_times_login: String!
             date_of_birth: String
+            createdBy: CreatedBy
+            updatedBy: UpdatedBy
         }
 
         type DeveloperResponse implements Response {
@@ -40,23 +42,25 @@ module.exports = {
             firstName: String!
             lastName: String!
             developer_code: String!
+            adminId: String!
             email: String!
             contact: String!
             gender: String!
-            active: Boolean!
-            profile_picture: String!
-            state: String!
-            city: String!
-            date_of_joining: String!
+            active: String!
+            profile_picture: String
+            state: String
+            city: String
+            date_of_joining: String
             date_of_birth: String!
-            developer_type: String!
+            developer_type: String
         }
         
         input UpdateDeveloperDetails {
             firstName: String!
             lastName: String!
             gender: String!
-            active: Boolean!
+            adminId: String!
+            active: String!
             profile_picture: String!
             state: String!
             city: String!

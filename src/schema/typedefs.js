@@ -15,6 +15,23 @@ const typeDefs = gql`
         message: String!
         errCode: Int!
     }
+
+    type CreatedBy {
+        _id: ID!
+        firstName: String!
+        lastName: String!
+        admin_id: String!
+        contact: String!
+    }
+
+    type UpdatedBy {
+        _id: ID!
+        firstName: String!
+        lastName: String!
+        admin_id: String!
+        contact: String!
+    }
+
     ${user.type}
     ${developer.type}
 

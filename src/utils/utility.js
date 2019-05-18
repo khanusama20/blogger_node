@@ -2,6 +2,28 @@
 // let _mFile = path.dirname(__dirname);
 // console.log(_mFile);
 let crypto = require('crypto');
+let AdminUser = require('../models/admin_user');
+let mongoose = require('mongoose');
+let mongo = require('../../mongo-connect');
+
+let ObjectId = mongoose.Types.ObjectId;
+
+
+
+/**
+ * @param {*} digit 
+ * @function isDigits
+ * @description This function helps us to validate the whole "39187983" string, All are numbers or mixed with alphabets
+ */
+let isDigits = function (digit) {
+    let statusCode = 0;
+    if(!isNaN(parseInt(digit))) {
+        statusCode = -1;      // when no characters are found then it returns -1 for success
+    } else {
+        statusCode = 1;       // When any alphabets are found then it breaks the loop and returns 1 for failed
+    }   
+    return statusCode;
+}
 
 module.exports = {
     generatePassword() {
@@ -42,7 +64,7 @@ module.exports = {
 
             resume:
             for (let i = 0 ; i < contact_no.length; i++) {
-                if (this.isDigits(contact_no[i]) == -1) {      // compare with success
+                if (isDigits(contact_no[i]) == -1) {      // compare with success
                     bool = true;
                     continue resume;
                 } else {
@@ -52,21 +74,6 @@ module.exports = {
             }
         }
         return bool;
-    },
-
-    /**
-     * @param {*} digit 
-     * @function isDigits
-     * @description This function helps us to validate the whole "39187983" string, All are numbers or mixed with alphabets
-     */
-    isDigits (digit) {
-        let statusCode = 0;
-        if(!isNaN(parseInt(digit))) {
-            statusCode = -1;      // when no characters are found then it returns -1 for success
-        } else {
-            statusCode = 1;       // When any alphabets are found then it breaks the loop and returns 1 for failed
-        }   
-        return statusCode;
     },
     appendId(document) {
         let _id = document._id.toString();
@@ -117,5 +124,31 @@ module.exports = {
             }
         }
         return bool
+    },
+    documentId(lastId) {
+        
+    },
+    authenticatAdminUser(admin_id) {
+        let query = {};
+
+        if (admin_id.length > 20) {
+            query = { _id: ObjectId(admin_id) }
+        } else {
+            query = { admin_id: admin_id }
+        }
+
+        return new Promise(async function (resolve, reject) {
+            await mongo.connect();
+            AdminUser.find(query).lean().exec(function (err, document) {
+                if (err) {
+                    throw new Error(err);
+                } else if (document.length > 0) {
+                    resolve({err_code: -1, msg: document[0]});
+                } else {
+                    resolve({err_code: 10, msg: null});
+                }
+            });
+        });
     }
 }
+
