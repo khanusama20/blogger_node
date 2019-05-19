@@ -18,6 +18,8 @@ module.exports = {
             date_of_birth: String
             createdBy: CreatedBy
             updatedBy: UpdatedBy
+            createdDate: String!
+            updatedDate: String!
         }
 
         type DeveloperResponse implements Response {

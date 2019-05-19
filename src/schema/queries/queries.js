@@ -56,7 +56,7 @@ module.exports = {
         log.info("Developer Code : " + developer_code);
         try {
             _modules_._mongo_.connect();
-            result = await developer.find({'developer_code': developer_code});
+            result = await developer.find({'developer_code': developer_code}).populate('createdBy', 'contact lastName firstName contact admin_id').populate('updatedBy', 'contact lastName firstName contact admin_id');
             _modules_._mongo_.close();
 
             if (result.length === 0) {

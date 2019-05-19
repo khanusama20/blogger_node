@@ -4,6 +4,7 @@ const user = require('./types-defs/user');
 // const _error_ = require('./types-defs/error')
 
 const developer = require('./types-defs/developer');
+const language = require('./types-defs/languages');
 
 // GraphQL: TypeDefs
 
@@ -34,18 +35,22 @@ const typeDefs = gql`
 
     ${user.type}
     ${developer.type}
+    ${language.type}
 
     type Query {
         ${user.queries}
         ${developer.queries}
+        ${language.queries}
     }
 
     ${user.input}
     ${developer.input}
+    ${language.input}
 
     type Mutation {
         ${developer.mutations}
         ${user.mutations}
+        ${language.mutations}
     }
 `;
 // Exports

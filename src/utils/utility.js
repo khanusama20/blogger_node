@@ -44,6 +44,13 @@ module.exports = {
         }
         return salt;
     },
+    randomId(howMany = 7, key = 'abcdef0123456789') {
+        let salt = '';
+        for (let x = 0; x < howMany; x++) {
+            salt += key.charAt(Math.floor(Math.random() * key.length));
+        }
+        return salt;
+    },
 
     catchError(message, status) {
         const errorBox = [];
@@ -127,6 +134,15 @@ module.exports = {
     },
     documentId(lastId) {
         
+    },
+    filterUserInfo(document) {
+        return {
+            _id: document._id.toString(),
+            firstName: document.firstName,
+            lastName: document.lastName,
+            admin_id: document.admin_id,
+            contact: document.contact
+        }
     },
     authenticatAdminUser(admin_id) {
         let query = {};

@@ -6,18 +6,29 @@ var ProgramminLanguage = new mongoose.Schema({
         required: true,
         unique: true
     },
-    ProgramminLanguageName: {
+    LanguageName: {
         type: String,
         required: true
     },
     status: {
-        type: String,
+        type: Number,
         default: 1
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    },
+    updatedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    updatedDate: {
+        type: String
+    },
+    createdDate: {
+        type: String
     }
+
 }, {
     versionKey: false,
     timestamps: true

@@ -8,6 +8,7 @@ const SERVER_IP = process.env.MONGO_DB_IP+':'+process.env.MONGO_PORT; // Localho
 const DB_NAME = process.env.DB_NAME // Keep is a database name which stores user notes
 const DB_PATH = `mongodb://${SERVER_IP}/${DB_NAME}`
 
+// const DB_PATH = process.env.SERVER_DB+'/'+process.env.DB_NAME
 
 mongoose.set('debug', true);
 
@@ -16,19 +17,21 @@ module.exports = {
     connect: function() {
         // await mongoose.connect(DB_PATH);
         // console.log('mongo-connection established')
-        mongoose.connect(DB_PATH).then(() => {
-            /** 
-             * When connection done
-             */
-            log.info('mongo-connection is established');
+        // mongoose.connect(DB_PATH).then(() => {
+        //     /** 
+        //      * When connection done
+        //      */
+        //     log.info('mongo-connection is established');
 
-        }).catch(err => {
-            /** 
-             * When connection failed
-             */
-            // console.error('mongo-connection error')
-            throw new Error(err)
-        })
+        // }).catch(err => {
+        //     /** 
+        //      * When connection failed
+        //      */
+        //     console.error('mongo-connection error', err)
+        //     // throw new Error(err)
+        // })
+
+        mongoose.connect(DB_PATH, {useNewUrlParser: true});
     },
 
     close: function() {

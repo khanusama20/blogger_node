@@ -22,10 +22,10 @@
     "express": "^4.16.4",
     "fs": "0.0.1-security",
     "graphql": "^14.1.1",
-    "graphql-tools": "^4.0.3",
+    "graphql-tools": "^4.0.4",
     "http": "0.0.0",
     "lodash": "^4.17.11",
-    "mongoose": "^5.4.17"
+    "mongoose": "^5.5.9"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

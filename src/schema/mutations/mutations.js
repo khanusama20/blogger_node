@@ -5,7 +5,9 @@ mongoose.Promise = require('bluebird');
 let log = _modules_.log.log;
 let utils = _modules_.util;
 
-let ERROR_CODE = _modules_.ERR_CODE
+let ERROR_CODE = _modules_.ERR_CODE;
+
+let ObjectId = mongoose.Types.ObjectId;
 
 module.exports = {
     createNewAdminUser: async(_A, args) => {
@@ -57,7 +59,7 @@ module.exports = {
                 } else {
                     log.info('Admin created successfully', result);
                     result = { adminUser: result };
-                    return utils.sendResponse(200, false, 'Admin created successfully', ERROR_CODE.FOUND, result);
+                    return utils.sendResponse(200, true, 'Admin created successfully', ERROR_CODE.FOUND, result);
                 }
             } catch(err) {
                 _modules_._mongo_.close();
@@ -112,30 +114,20 @@ module.exports = {
             }
 
             let admin_result = null;
+            try {
+                let admin_res = await utils.authenticatAdminUser(args.developer.adminId);
+                if (admin_res.err_code === -1) {
+                    admin_result = admin_res.msg;
+                } else {
+                    log.info('Sorry! the user is not register yet');
+                    return utils.sendResponse(200, false, 'Sorry! the user is not register yet', ERROR_CODE.USER_FAILED, {});
+                }
+            } catch (DatabaseException) {
+                log.error('Database Error : ' , DatabaseException);
+                return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, {});
+            }
 
-            admin_result = {
-                "contact" : "7208204758", 
-                "firstName" : "Mubeen", 
-                "lastName" : "Khan", 
-                "admin_id" : "CX20A", 
-                "_id": "5cd12f48322f1f29a82adbd6"
-            };
-
-            
-            // try {
-            //     // await _modules_._mongo_.connect();
-            //     let admin_res = await utils.authenticatAdminUser(args.developer.adminId);
-            //     _modules_._mongo_.close();
-            //     if (admin_res.err_code === -1) {
-            //         admin_result = admin_res.msg;
-            //     }
-            // } catch (DatabaseException) {
-            //     log.error('Database Error : ' , DatabaseException);
-            //     return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, result);
-            // }
-
-            // log.info('Admin Authorized : ' , admin_result);
-    
+            log.info('Admin Authorized : ' , admin_result);
             let new_developer = new Developer({
                 firstName: args.developer.firstName,
                 lastName: args.developer.lastName,
@@ -152,10 +144,8 @@ module.exports = {
                 date_of_joining: args.developer.date_of_joining,
                 date_of_birth: args.developer.date_of_birth,
                 age: developer_age,
-                // createdBy: admin_result._id,
-                // updatedBy: admin_result._id
-                createdBy: '5cd12f48322f1f29a82adbd6',
-                updatedBy: '5cd12f48322f1f29a82adbd6'
+                createdBy: admin_result._id,
+                updatedBy: admin_result._id
             });
 
             let result;
@@ -172,20 +162,8 @@ module.exports = {
                     let createdBy, updatedBy;
 
                     if (result.createdBy.toString() === result.updatedBy.toString()) {
-                        createdBy = {
-                            _id: admin_result._id.toString(),
-                            firstName: admin_result.firstName,
-                            lastName: admin_result.lastName,
-                            admin_id: admin_result.admin_id,
-                            contact: admin_result.contact
-                        }
-                        updatedBy = {
-                            _id: admin_result._id.toString(),
-                            firstName: admin_result.firstName,
-                            lastName: admin_result.lastName,
-                            admin_id: admin_result.admin_id,
-                            contact: admin_result.contact
-                        }
+                        createdBy = utils.filterUserInfo(admin_result);
+                        updatedBy = utils.filterUserInfo(admin_result);
                     }
 
                     let new_result = { 
@@ -212,7 +190,7 @@ module.exports = {
                         } 
                     }    
                     
-                    return utils.sendResponse(200, false, 'Developer added successfully', ERROR_CODE.FOUND, new_result);
+                    return utils.sendResponse(200, true, 'Developer added successfully', ERROR_CODE.FOUND, new_result);
                 }
             } catch(Exception) {
                 _modules_._mongo_.close();
@@ -220,5 +198,180 @@ module.exports = {
                 return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, result);
             }    
         }    
-    }   
+    },
+    createNewLanguage: async function(A, args) {
+
+        log.info("mutation => createNewLanguage");
+        log.info("mutations.js");
+
+        let form_body = args.formdata;
+
+        // checking mandatory fields
+        let mandatory_fields = new RegExp('^(LanguageName|adminId)$');
+        for(let props in form_body) {
+            if (mandatory_fields.test(props) === true && !Boolean(form_body[props])) {
+                log.info('Not found field: ' + props);
+                return utils.sendResponse(200, false, 'The mandatory fields are missing or not found', ERROR_CODE.FIELDS_NOT_FOUND, {});
+            }
+        }
+
+        // fields validation
+        if (parseInt(form_body.status) !== 1 && parseInt(form_body.status) !== 0) {
+            return utils.sendResponse(200, false, 'Invalid input', ERROR_CODE.INVALID_INPUT, {});
+        }
+
+        if (!Boolean(form_body.language_id)) {
+            form_body.language_id = 'L'+utils.randomId();
+        }
+        
+        // User validation
+        let admin_result;
+        try {
+            admin_result = await utils.authenticatAdminUser(form_body.adminId);
+            if (admin_result.err_code === 10) {
+                log.info('Sorry! the user is not register yet');
+                return utils.sendResponse(200, false, 'Sorry! the user is not register yet', ERROR_CODE.USER_FAILED, {});
+            }
+        } catch(DatabaseError) {
+            log.error('Database Error : ' , DatabaseError);
+            return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, {});
+        }
+
+        log.info('Admin Info : ', admin_result);
+
+        let new_langauge = new _modules_.languageSchema({
+            language_id: form_body.language_id,
+            LanguageName: form_body.LanguageName,
+            status: form_body.status,
+            createdBy: admin_result.msg._id,
+            updatedBy: admin_result.msg._id,
+            updatedDate: Date.now(),
+            createdDate: Date.now(),
+        });
+        
+        try {
+            _modules_._mongo_.connect();
+            let result = await new_langauge.save();
+            _modules_._mongo_.close();
+            if (result == null || result === "") {
+                log.info('Sorry! language is not added', result);
+                return utils.sendResponse(200, true, 'Sorry! language is not added', ERROR_CODE.NOT_FOUND, result);
+            } else {
+                log.info('New language is created successfully', result);
+
+                let createdBy, updatedBy;
+
+                admin_result = admin_result.msg;
+
+                createdBy = utils.filterUserInfo(admin_result);
+                updatedBy = utils.filterUserInfo(admin_result);
+
+                let new_result = {
+                    language: {
+                        language_id: result.language_id,
+                        LanguageName: result.LanguageName,
+                        status: result.status,
+                        createdBy: createdBy,
+                        updatedBy: updatedBy,
+                        updatedDate: result.updatedDate,
+                        createdDate: result.createdDate
+                    }
+                }
+                return utils.sendResponse(200, true, 'New language is created successfully', ERROR_CODE.FOUND, new_result);
+            }
+        } catch(DatabaseError) {
+            _modules_._mongo_.close();
+            log.error(DatabaseError);
+            return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, {});
+        }
+    },
+    updateExistingLanguage: async function(A, args) {
+
+        log.info("mutation => updateExistingLanguage");
+        log.info("mutations.js");
+
+        let form_body = args.formdata;
+
+        // checking mandatory fields
+        let mandatory_fields = new RegExp('^(LanguageName|adminId)$');
+        for(let props in form_body) {
+            if (mandatory_fields.test(props) === true && !Boolean(form_body[props])) {
+                log.info('Not found field: ' + props);
+                return utils.sendResponse(200, false, 'The mandatory fields are missing or not found', ERROR_CODE.FIELDS_NOT_FOUND, {});
+            }
+        }
+
+        // fields validation
+        if (parseInt(form_body.status) !== 1 && parseInt(form_body.status) !== 0) {
+            return utils.sendResponse(200, false, 'Invalid input', ERROR_CODE.INVALID_INPUT, {});
+        }
+
+        // User validation
+        let admin_result;
+        try {
+            admin_result = await utils.authenticatAdminUser(form_body.adminId);
+            if (admin_result.err_code === 10) {
+                log.info('Sorry! the user is not register yet');
+                return utils.sendResponse(200, false, 'Sorry! the user is not register yet', ERROR_CODE.USER_FAILED, {});
+            }
+        } catch(DatabaseError) {
+            log.error('Database Error : ' , DatabaseError);
+            return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, {});
+        }
+
+        let update_language = {
+            LanguageName: form_body.LanguageName,
+            status: form_body.status,
+            updatedBy: admin_result.msg._id,
+            updatedDate: Date.now()
+        }
+
+        let query = form_body._id.length > 20 ? { _id: ObjectId(form_body._id) } : { language_id: form_body._id}
+        try {
+            _modules_._mongo_.connect();
+            let result = await _modules_.languageSchema.findOneAndUpdate(query, update_language, {new: true});
+            _modules_._mongo_.close();
+            if (result == null || result === "") {
+                log.info('Sorry! record is not updated', result);
+                return utils.sendResponse(200, true, 'Sorry! record is not updated', ERROR_CODE.NOT_FOUND, result);
+            } else {
+                let createdBy, updatedBy, created_by_result;
+
+                admin_result = admin_result.msg;
+                
+                if (result.createdBy.toString() === result.updatedBy.toString()) {
+                    createdBy = utils.filterUserInfo(admin_result);
+                    updatedBy = utils.filterUserInfo(admin_result);
+
+                } else {
+                    updatedBy = utils.filterUserInfo(admin_result);
+                    _modules_._mongo_.connect();
+                    created_by_result = await _modules_.User.find({_id: ObjectId(result.createdBy)});
+                    _modules_._mongo_.close();
+                    if (created_by_result.length > 0) {
+                        createdBy = utils.filterUserInfo(created_by_result);
+                    } else {
+                        createdBy = null
+                    }
+                }
+
+                let new_result = {
+                    language: {
+                        language_id: result.language_id,
+                        LanguageName: result.LanguageName,
+                        status: result.status,
+                        createdBy: createdBy,
+                        updatedBy: updatedBy,
+                        updatedDate: result.updatedDate,
+                        createdDate: result.createdDate
+                    }
+                }
+                return utils.sendResponse(200, true, 'The record is updated successfully', ERROR_CODE.FOUND, new_result);
+            }
+        } catch(DatabaseError) {
+            _modules_._mongo_.close();
+            log.error(DatabaseError);
+            return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, {});
+        }
+    }  
 }

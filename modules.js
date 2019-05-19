@@ -6,4 +6,5 @@ module.exports = {
     mongoose: require('mongoose'),
     developer: require('./src/models/developer'),
     log: require('./src/config/log_config'),
+    languageSchema: require('./src/models/programming-language-master')
 }
