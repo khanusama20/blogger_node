@@ -16,11 +16,11 @@ var ProgramminLanguage = new mongoose.Schema({
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'AdminUser'
     },
     updatedBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'AdminUser'
     },
     updatedDate: {
         type: String

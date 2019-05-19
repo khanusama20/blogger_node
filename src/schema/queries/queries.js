@@ -96,5 +96,35 @@ module.exports = {
             log.error(Exception);
             return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.DATABASE_ERROR, result);
         }
+    },
+    fetchAllLanguages: async function(parent, args) {
+
+        log.info('fetchAllLanguages');
+        log.info('queries.js');
+
+        let languageSchema = _modules_.languageSchema;
+        let result = {};
+        try {
+            _modules_._mongo_.connect();
+            result = await languageSchema.find({}).populate('createdBy').populate('updatedBy').lean();
+            _modules_._mongo_.close();
+
+            if (result.length === 0) {
+                log.info('Sorry! we are not found any records');
+                return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.NOT_FOUND, result);
+            } else {
+                log.info('Records found successfully');
+                let new_map_result = result.map( docs => {
+                    docs.createdBy = utils.filterUserInfo(docs.createdBy);
+                    docs.updatedBy = utils.filterUserInfo(docs.updatedBy);
+                    return docs
+                });
+                let _result_ = { language: new_map_result };
+                return utils.sendResponse(200, true, 'Records found successfully', ERROR_CODE.FOUND, _result_);   
+            }
+        } catch(Exception) {
+            log.error(Exception);
+            return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.DATABASE_ERROR, result);
+        }
     }
 }
