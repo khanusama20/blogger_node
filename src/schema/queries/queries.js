@@ -45,7 +45,8 @@ module.exports = {
     //         console.log(Exception);
     //     }
     // },
-    fetchSingleDeveloper: async function(parent, args) {
+    
+    fetchSingleDeveloper: async function(parent, args, context, info) {
         log.info('fetchSingleDeveloper', args);
         log.info('queries.js');
 
@@ -72,7 +73,7 @@ module.exports = {
             return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.DATABASE_ERROR, result);
         }
     },
-    fetchAllDevelopers: async function(parent, args) {
+    fetchAllDevelopers: async function(parent, args, context, info) {
 
         log.info('fetchAllDevelopers', args);
         log.info('queries.js');
@@ -97,7 +98,7 @@ module.exports = {
             return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.DATABASE_ERROR, result);
         }
     },
-    fetchAllLanguages: async function(parent, args) {
+    fetchAllLanguages: async function(parent, args, context, info) {
 
         log.info('fetchAllLanguages');
         log.info('queries.js');
