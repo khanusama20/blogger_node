@@ -5,10 +5,11 @@ const user = require('./types-defs/user');
 
 const developer = require('./types-defs/developer');
 const language = require('./types-defs/languages');
+const bug = require('./types-defs/bug');
 
 // GraphQL: TypeDefs
 
-const typeDefs = gql`
+const typeDefs = gql `
 
     interface Response {
         code: String!
@@ -36,6 +37,7 @@ const typeDefs = gql`
     ${user.type}
     ${developer.type}
     ${language.type}
+    ${bug.type}
 
     type Query {
         ${user.queries}
@@ -46,11 +48,13 @@ const typeDefs = gql`
     ${user.input}
     ${developer.input}
     ${language.input}
+    ${bug.input}
 
     type Mutation {
         ${developer.mutations}
         ${user.mutations}
         ${language.mutations}
+        ${bug.mutations}
     }
 `;
 // Exports

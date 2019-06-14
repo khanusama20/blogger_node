@@ -45,19 +45,19 @@ module.exports = {
     //         console.log(Exception);
     //     }
     // },
-    
-    fetchSingleDeveloper: async function(parent, args, context, info) {
+
+    fetchSingleResource: async function(parent, args, context, info) {
         log.info('fetchSingleDeveloper', args);
         log.info('queries.js');
 
-        let developer = _modules_.developer;
+        let resource = _modules_.resource;
         let result = {};
-        let developer_code = args['developer_code'];
+        let resource_id = args['resource_id'];
 
-        log.info("Developer Code : " + developer_code);
+        log.info("Resource ID : " + resource_id);
         try {
             _modules_._mongo_.connect();
-            result = await developer.find({'developer_code': developer_code}).populate('createdBy', 'contact lastName firstName contact admin_id').populate('updatedBy', 'contact lastName firstName contact admin_id');
+            result = await resource.find({ 'resource_id': resource_id }).populate('createdBy', 'contact lastName firstName contact admin_id').populate('updatedBy', 'contact lastName firstName contact admin_id');
             _modules_._mongo_.close();
 
             if (result.length === 0) {
@@ -65,24 +65,24 @@ module.exports = {
                 return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.NOT_FOUND, result);
             } else {
                 log.info('Developer is found successfully');
-                result = { developer: result[0]};
-                return utils.sendResponse(200, true, 'Developer is found successfully', ERROR_CODE.FOUND, result);   
+                result = { developer: result[0] };
+                return utils.sendResponse(200, true, 'Developer is found successfully', ERROR_CODE.FOUND, result);
             }
-        } catch(Exception) {
+        } catch (Exception) {
             log.error(Exception);
             return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.DATABASE_ERROR, result);
         }
     },
-    fetchAllDevelopers: async function(parent, args, context, info) {
+    fetchAllResource: async function(parent, args, context, info) {
 
         log.info('fetchAllDevelopers', args);
         log.info('queries.js');
 
-        let developer = _modules_.developer;
+        let resource = _modules_.resource;
         let result = {};
         try {
             _modules_._mongo_.connect();
-            result = await developer.find({}).lean();
+            result = await resource.find({}).lean();
             _modules_._mongo_.close();
 
             if (result.length === 0) {
@@ -91,9 +91,9 @@ module.exports = {
             } else {
                 log.info('Developers found successfully');
                 let _result_ = { developer: result };
-                return utils.sendResponse(200, true, 'Developers found successfully', ERROR_CODE.FOUND, _result_);   
+                return utils.sendResponse(200, true, 'Developers found successfully', ERROR_CODE.FOUND, _result_);
             }
-        } catch(Exception) {
+        } catch (Exception) {
             log.error(Exception);
             return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.DATABASE_ERROR, result);
         }
@@ -115,15 +115,15 @@ module.exports = {
                 return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.NOT_FOUND, result);
             } else {
                 log.info('Records found successfully');
-                let new_map_result = result.map( docs => {
+                let new_map_result = result.map(docs => {
                     docs.createdBy = utils.filterUserInfo(docs.createdBy);
                     docs.updatedBy = utils.filterUserInfo(docs.updatedBy);
                     return docs
                 });
                 let _result_ = { language: new_map_result };
-                return utils.sendResponse(200, true, 'Records found successfully', ERROR_CODE.FOUND, _result_);   
+                return utils.sendResponse(200, true, 'Records found successfully', ERROR_CODE.FOUND, _result_);
             }
-        } catch(Exception) {
+        } catch (Exception) {
             log.error(Exception);
             return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.DATABASE_ERROR, result);
         }
