@@ -3,6 +3,7 @@ const { ApolloServer } = require('apollo-server-express');
 // Imports: GraphQL TypeDefs & Resolvers
 const typeDefs = require('./typedefs.js') ;
 const resolvers = require('./resolvers.js');
+const log = require('../config/log_config').log;
 
 // GraphQL: Schema
 
@@ -21,14 +22,10 @@ const PORT = process.env.PORT;
 const apolloServer = new ApolloServer({
     typeDefs: typeDefs,
     resolvers: resolvers,
-    // formatError: error => {
-    //     console.log('Error Handling', error);
-    //     return {
-    //         message: error.originalError.data,
-    //         status: error.originalError.code,
-    //         timeStamp: new Date(Date.now())
-    //     }
-    // },
+    context: ({ req }) => {
+        log.info(req.query.abc);
+        log.info(req.body);
+    },
     playground: {
         endpoint: `http://${IP_ADDRESS}:${PORT}/graphql`,
         settings: {
