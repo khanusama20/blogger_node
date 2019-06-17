@@ -3,6 +3,7 @@
 // console.log(_mFile);
 let crypto = require('crypto');
 let AdminUser = require('../models/admin_user');
+let Resource = require('../models/developer');
 let mongoose = require('mongoose');
 let mongo = require('../../mongo-connect');
 
@@ -15,13 +16,13 @@ let ObjectId = mongoose.Types.ObjectId;
  * @function isDigits
  * @description This function helps us to validate the whole "39187983" string, All are numbers or mixed with alphabets
  */
-let isDigits = function (digit) {
+let isDigits = function(digit) {
     let statusCode = 0;
-    if(!isNaN(parseInt(digit))) {
-        statusCode = -1;      // when no characters are found then it returns -1 for success
+    if (!isNaN(parseInt(digit))) {
+        statusCode = -1; // when no characters are found then it returns -1 for success
     } else {
-        statusCode = 1;       // When any alphabets are found then it breaks the loop and returns 1 for failed
-    }   
+        statusCode = 1; // When any alphabets are found then it breaks the loop and returns 1 for failed
+    }
     return statusCode;
 }
 
@@ -56,36 +57,36 @@ module.exports = {
         const errorBox = [];
         errorBox.push(message)
         let error = new Error();
-        error = Object.assign({data: errorBox[0], code: status}, error);
+        error = Object.assign({ data: errorBox[0], code: status }, error);
         throw error;
     },
 
     validateMobileNo: contact_no => {
         let bool = false;
         if (contact_no.length < 10) {
-          return bool;
+            return bool;
         }
-      
-        if(contact_no.startsWith('6') || contact_no.startsWith('7') || contact_no.startsWith('8') || contact_no.startsWith('9')) {
+
+        if (contact_no.startsWith('6') || contact_no.startsWith('7') || contact_no.startsWith('8') || contact_no.startsWith('9')) {
             contact_no = contact_no.split('');
 
             resume:
-            for (let i = 0 ; i < contact_no.length; i++) {
-                if (isDigits(contact_no[i]) == -1) {      // compare with success
-                    bool = true;
-                    continue resume;
-                } else {
-                    bool = false;    // when failed then it stops the excution    
-                    break;                   
+                for (let i = 0; i < contact_no.length; i++) {
+                    if (isDigits(contact_no[i]) == -1) { // compare with success
+                        bool = true;
+                        continue resume;
+                    } else {
+                        bool = false; // when failed then it stops the excution    
+                        break;
+                    }
                 }
-            }
         }
         return bool;
     },
     appendId(document) {
         let _id = document._id.toString();
         delete document._id;
-        document = Object.assign({_id: _id}, document);
+        document = Object.assign({ _id: _id }, document);
         return document;
     },
     sendResponse(statusCode, success, message, errCode, result) {
@@ -96,7 +97,7 @@ module.exports = {
             errCode: errCode,
         }, result);
     },
-    
+
     hash(plainText, public_key) {
         let data = plainText.concat(public_key);
         let hash_algo = crypto.createHash('sha1');
@@ -107,7 +108,7 @@ module.exports = {
     isValidString(text) {
         let split_text = text.split('');
         let bool = true;
-        for(let element of split_text) {
+        for (let element of split_text) {
             if (!isNaN(element)) {
                 bool = false;
                 break;
@@ -121,7 +122,8 @@ module.exports = {
 
     isSymbol(character) {
         let symbols = ['1', '~', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '=', '[', ']', '|', '{', '}',
-        ':', ';', '"', '?', '>', '<', '/', '.']
+            ':', ';', '"', '?', '>', '<', '/', '.'
+        ]
 
         let bool = false;
         for (let i = 0; i < symbols.length; i++) {
@@ -133,15 +135,29 @@ module.exports = {
         return bool
     },
     documentId(lastId) {
-        
+
     },
-    filterUserInfo(document) {
-        return {
-            _id: document._id.toString(),
-            firstName: document.firstName,
-            lastName: document.lastName,
-            admin_id: document.admin_id,
-            contact: document.contact
+    filterUserInfo(document, _for_ = 'admin') {
+        if (_for_ === 'admin') {
+            return {
+                _id: document._id.toString(),
+                firstName: document.firstName,
+                lastName: document.lastName,
+                admin_id: document.admin_id,
+                contact: document.contact
+            }
+        } else {
+            return {
+                _id: document._id.toString(),
+                firstName: document.firstName,
+                lastName: document.lastName,
+                resource_id: document.admin_id,
+                contact: document.contact,
+                email: document.email,
+                gender: document.gender,
+                employee_status: document.employee_status,
+                resource_type: document.resource_type
+            }
         }
     },
     authenticatAdminUser(admin_id) {
@@ -153,18 +169,42 @@ module.exports = {
             query = { admin_id: admin_id }
         }
 
-        return new Promise(async function (resolve, reject) {
+        return new Promise(async function(resolve, reject) {
             await mongo.connect();
-            AdminUser.find(query).lean().exec(function (err, document) {
+            AdminUser.find(query).lean().exec(function(err, document) {
                 if (err) {
                     throw new Error(err);
                 } else if (document.length > 0) {
-                    resolve({err_code: -1, msg: document[0]});
+                    resolve({ err_code: -1, msg: document[0] });
                 } else {
-                    resolve({err_code: 10, msg: null});
+                    resolve({ err_code: 10, msg: null });
                 }
             });
         });
+    },
+    // Normally this function is used for check user (tester or developer) is valid or not
+    // Currently it is used only for Authentication. After JWT implementation may be it will not used
+    isUserAuthentic(resource_id) {
+        let query = {};
+
+        if (user_id.length > 20) {
+            query = { "_id": ObjectId(resource_id) }
+        } else {
+            query = { "resource_id": resource_id }
+        }
+
+        return new Promise(async function(resolve, reject) {
+            await mongo.connect();
+            Resource.find(query).lean().exec(function(err, document) {
+                if (err) {
+                    throw new Error(err);
+                } else if (document.length > 0) {
+                    resolve({ err_code: -1, msg: document[0] });
+                } else {
+                    resolve({ err_code: 10, msg: null });
+                }
+            });
+        });
+
     }
 }
-

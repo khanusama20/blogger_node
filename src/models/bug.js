@@ -13,17 +13,21 @@ var Bug = new mongoose.Schema({
     bug_description: {
         type: String
     },
-    bug_assign_to: {
+    assign_to: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Developer'
+        ref: 'Resource'
     },
     bug_type: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ProgramminLanguage'
     },
+    priority: {
+        type: String,
+        default: 'low'
+    },
     status: {
         type: String,
-        default: 'fresh'
+        default: 'open'
     },
     bug_assign_At: {
         type: String,
@@ -35,11 +39,11 @@ var Bug = new mongoose.Schema({
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'Resource'
     },
     updatedBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'Resource'
     }
 }, {
     versionKey: false,

@@ -2,16 +2,19 @@ module.exports = {
     type: `
         type Bug {
             _id: ID!
-            bug_id: String!
-            title: String!
-            bug_description: String!
-            bug_assign_to: Developer
-            bug_type: String!
-            status: String!
-            bug_assign_At: String!
-            bug_fixed_At: String!
-            createdBy: String!
-            updatedBy: String!
+            bug_id: String
+            title: String
+            resource_id: String
+            bug_description: String
+            assign_to: Resource
+            assign_by: Resource
+            bug_type: String
+            status: String
+            priority: String
+            bug_assign_At: String
+            bug_fixed_At: String
+            createdBy: String
+            updatedBy: String
         }
 
         type BugResponse implements Response {
@@ -19,7 +22,7 @@ module.exports = {
             success: Boolean!
             message: String!
             errCode: Int!
-            developer: Bug
+            bug: Bug
         }
 
         type AllBugs implements Response {
@@ -27,18 +30,21 @@ module.exports = {
             success: Boolean!
             message: String!
             errCode: Int!
-            developer: [Bug]
+            bugs: [Bug]
         }
     `,
 
     input: `
         input RaiseNewBug {
-            bug_id: String!
             title: String!
-            bug_description: String!
-            bug_assign_to: String!
+            bug_description: String
+            assign_to: String!
             bug_type: String!
             status: String!
+            priority: String!
+            assign_by: String!
+            resource_id: String!
+            whoIsAllocating: String!
         }
         
         input UpdateRaisedBug {
@@ -56,7 +62,7 @@ module.exports = {
         developerLogin(email: String!, password: String!): Developer!
     `,
     mutations: `
-        createNewBug(bug: RaiseNewBug): Bug!
-        updateCreatedBug(bug: UpdateRaisedBug): Bug!
+        createNewBug(formData: RaiseNewBug): BugResponse!
+        updateCreatedBug(bug: UpdateRaisedBug): BugResponse!
     `
 }

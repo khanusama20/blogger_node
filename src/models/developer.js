@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-var Developer = new mongoose.Schema({
+var Resource = new mongoose.Schema({
     firstName: {
         type: String,
         required: true
@@ -9,10 +9,18 @@ var Developer = new mongoose.Schema({
         type: String,
         required: true
     },
-    developer_code: {
+    resource_id: {
         type: String,
         unique: true,
         required: true
+    },
+    employee_status: { // for identify the employee is fresher or experienced
+        type: String,
+        default: null
+    },
+    resource_type: {
+        type: String,
+        default: null
     },
     private_key: {
         type: String,
@@ -87,4 +95,4 @@ var Developer = new mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('Developer', Developer);
+module.exports = mongoose.model('Resource', Resource);
