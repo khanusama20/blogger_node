@@ -23,8 +23,8 @@ const apolloServer = new ApolloServer({
     typeDefs: typeDefs,
     resolvers: resolvers,
     context: ({ req }) => {
-        log.info(req.query.abc);
-        log.info(req.body);
+        // log.info(req.query.abc);
+        // log.info(req.body);
     },
     playground: {
         endpoint: `http://${IP_ADDRESS}:${PORT}/graphql`,
