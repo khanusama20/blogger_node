@@ -56,3 +56,4 @@ var AdminUser = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('AdminUser', AdminUser);
+console.log('admin_user.js is loaded successfully');

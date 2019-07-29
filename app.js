@@ -39,3 +39,5 @@ let server = app.listen(PORT, IP_ADDRESS || '127.0.0.1', () => {
   log.info(`http://${server.address().address}:${PORT}/graphql`);
   log.info('Mongodb : '+ _modules_._mongo_.db_info());
 });
+
+console.log('app.js is loaded successfully');

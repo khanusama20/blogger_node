@@ -7,5 +7,6 @@ module.exports = {
     resource: require('./src/models/developer'),
     log: require('./src/config/log_config'),
     languageSchema: require('./src/models/programming-language-master'),
-    bug: require('./src/models/bug')
+    bug: require('./src/models/bug'),
+    todo: require('./src/models/todo')
 }

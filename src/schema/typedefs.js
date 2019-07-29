@@ -6,6 +6,7 @@ const user = require('./types-defs/user');
 const developer = require('./types-defs/developer');
 const language = require('./types-defs/languages');
 const bug = require('./types-defs/bug');
+const todo = require('./types-defs/todo');
 
 // GraphQL: TypeDefs
 
@@ -38,24 +39,29 @@ const typeDefs = gql `
     ${developer.type}
     ${language.type}
     ${bug.type}
+    ${todo.type}
 
     type Query {
         ${user.queries}
         ${developer.queries}
         ${language.queries}
+        ${todo.queries}
     }
 
     ${user.input}
     ${developer.input}
     ${language.input}
     ${bug.input}
+    ${todo.input}
 
     type Mutation {
         ${developer.mutations}
         ${user.mutations}
         ${language.mutations}
         ${bug.mutations}
+        ${todo.mutations}
     }
 `;
 // Exports
 module.exports = typeDefs;
+console.log('typedefs.js is loaded successfully');

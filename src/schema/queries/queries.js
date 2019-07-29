@@ -129,3 +129,5 @@ module.exports = {
         }
     }
 }
+
+console.log('queries.js is loaded successfully');

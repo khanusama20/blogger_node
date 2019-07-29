@@ -35,3 +35,4 @@ const apolloServer = new ApolloServer({
 });
 
 module.exports = apolloServer
+console.log('Schema.js loaded successfully');

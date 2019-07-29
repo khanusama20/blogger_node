@@ -16,3 +16,5 @@ const resolvers = {
 };
 // Exports statement
 module.exports = resolvers;
+
+console.log('resolvers.js loaded successfully');

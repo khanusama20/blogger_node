@@ -96,3 +96,4 @@ var Resource = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Resource', Resource);
+console.log('developer.js loaded successfully');

@@ -51,3 +51,4 @@ var Bug = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Bug', Bug);
+console.log('bug.js loaded successfully');

@@ -208,3 +208,5 @@ module.exports = {
 
     }
 }
+
+console.log('utility.js is loaded successfully');

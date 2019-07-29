@@ -17,3 +17,5 @@ module.exports =  {
     FOUND: FOUND,
     INVALID_INPUT: INVALID_INPUT
 }
+
+console.log('error-codes.js loaded successfully');

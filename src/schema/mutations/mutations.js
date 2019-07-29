@@ -534,4 +534,16 @@ module.exports = {
             return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, {});
         }
     },
+
+    createNewTask: async (parent, args) => {
+        // Fields validation of todo
+        let todo_body = args.task;
+
+        let mandatory_fields = new RegExp('^(title|createdBy)$');
+
+
+        let todo = new _modules_.todo();
+    }
 }
+
+console.log('mutations.js is loaded successfully');
