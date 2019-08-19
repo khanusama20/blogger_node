@@ -1,13 +1,16 @@
-const _modules_ = require('../../../modules');
-const mongoose = _modules_.mongoose;
+let Schema = require('../../../modules');
+let appConfig = require('../../config/app_config');
+let utils = require('../../utils/utility');
+let log = require('../../config/log_config');
+
+let _mongo_ = require('../../../mongo-connect');
+let mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
-let log = _modules_.log.log;
-let utils = _modules_.util;
-
-let ERROR_CODE = _modules_.ERR_CODE;
-
+let errcode = appConfig.errcodes;
+let errmessage = appConfig.errmessages;
 let ObjectId = mongoose.Types.ObjectId;
+
 
 module.exports = {
     createNewAdminUser: async(_A, args) => {
@@ -17,15 +20,15 @@ module.exports = {
 
         if (utils.isValidString(body.firstName) === false || utils.isValidString(body.lastName) === false) {
             log.error('The name should not contain numbers and special characters');
-            return utils.sendResponse(200, false, 'The name should not contain numbers and special characters', ERROR_CODE.INVALID_INPUT, {});
+            return utils.sendResponse(200, false, 'The name should not contain numbers and special characters', errcode.INVALID_INPUT, {});
         } else if (utils.validateMobileNo(body.contact) === false) {
             log.error('The contact no. is invalid');
-            return utils.sendResponse(200, false, 'The contact no. is invalid', ERROR_CODE.INVALID_INPUT, {});
+            return utils.sendResponse(200, false, 'The contact no. is invalid', errcode.INVALID_INPUT, {});
         } else {
-            let AdminUser = _modules_.User;
+            let AdminUser = Schema.User;
 
-            let public_key = _modules_.util.genSalt();
-            let random_password = _modules_.util.generatePassword();
+            let public_key = utils.genSalt();
+            let random_password = utils.generatePassword();
             let private_key = utils.hash(random_password, public_key);
 
             log.info('PUBLIC KEY : ' + public_key);
@@ -49,22 +52,22 @@ module.exports = {
 
             let result = {};
             try {
-                _modules_._mongo_.connect();
+                _mongo_.connect();
                 result = await admin_user.save();
-                _modules_._mongo_.close();
+                _mongo_.close();
 
                 if (result === null || result === "") {
                     log.info('Sorry! admin creation process failed');
-                    return utils.sendResponse(200, false, 'Sorry! admin creation process failed', ERROR_CODE.USER_FAILED, result);
+                    return utils.sendResponse(200, false, 'Sorry! admin creation process failed', errcode.USER_FAILED, result);
                 } else {
                     log.info('Admin created successfully', result);
                     result = { adminUser: result };
-                    return utils.sendResponse(200, true, 'Admin created successfully', ERROR_CODE.FOUND, result);
+                    return utils.sendResponse(200, true, 'Admin created successfully', errcode.FOUND, result);
                 }
             } catch (err) {
-                _modules_._mongo_.close();
+                _mongo_.close();
                 log.error(err);
-                return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, result);
+                return utils.sendResponse(200, false, 'Database Error', errcode.DATABASE_ERROR, result);
             }
         }
     },
@@ -73,7 +76,7 @@ module.exports = {
         log.info("mutation => createNewDeveloper");
         log.info("mutations.js");
 
-        let Developer = _modules_.resource; // Developer is means as resource
+        let Developer = Schema.resource; // Developer is means as resource
         let developer_age = 23;
 
         let mandatory_fields = new RegExp('^(firstName|lastName|email|contact|gender|date_of_birth)$');
@@ -81,7 +84,7 @@ module.exports = {
         for (let fields_name in args.resource) {
             if (mandatory_fields.test(fields_name)) {
                 if (args.resource[fields_name] === "" || args.resource[fields_name] === null || args.resource[fields_name] === undefined) {
-                    return utils.sendResponse(200, false, 'The mandatory fields are not found', ERROR_CODE.FIELDS_NOT_FOUND, {});
+                    return utils.sendResponse(200, false, 'The mandatory fields are not found', errcode.FIELDS_NOT_FOUND, {});
                 }
             }
         }
@@ -89,25 +92,25 @@ module.exports = {
         let resource_type_options = new RegExp('^(developer|tester)$');
         if (resource_type_options.test(args.resource.resource_type)) {
             log.info('Unidentified the resource type');
-            return utils.sendResponse(200, false, 'Unidentified the resource type', ERROR_CODE.INVALID_INPUT, {});
+            return utils.sendResponse(200, false, 'Unidentified the resource type', errcode.INVALID_INPUT, {});
         }
 
         let employee_status_regex = new RegExp('^(fresher|experienced)$');
         if (employee_status_regex.test(args.resource.employee_status)) {
             log.info('Unidentified the employee status');
-            return utils.sendResponse(200, false, 'Unidentified the employee status', ERROR_CODE.INVALID_INPUT, {});
+            return utils.sendResponse(200, false, 'Unidentified the employee status', errcode.INVALID_INPUT, {});
         }
 
         if (utils.isValidString(args.resource.firstName) === false || utils.isValidString(args.resource.lastName) === false) {
             log.error('The name should not contain numbers and special characters');
-            return utils.sendResponse(200, false, 'The name should not contain numbers and special characters', ERROR_CODE.INVALID_INPUT, {});
+            return utils.sendResponse(200, false, 'The name should not contain numbers and special characters', errcode.INVALID_INPUT, {});
         } else if (utils.validateMobileNo(args.resource.contact) === false) {
             log.error('The contact no. is invalid');
-            return utils.sendResponse(200, false, 'The contact no. is invalid', ERROR_CODE.INVALID_INPUT, {});
+            return utils.sendResponse(200, false, 'The contact no. is invalid', errcode.INVALID_INPUT, {});
         } else {
 
-            let public_key = _modules_.util.genSalt();
-            let random_password = _modules_.util.generatePassword();
+            let public_key = utils.genSalt();
+            let random_password = utils.generatePassword();
             let private_key = utils.hash(random_password, public_key);
 
             log.info('PUBLIC KEY : ' + public_key);
@@ -117,12 +120,12 @@ module.exports = {
             let gender = args.resource.gender === "" || args.resource.gender === null || args.resource.gender === undefined ? "" : args.resource.gender.toLowerCase();
             if (gender === 'male' || gender === 'female') {} else {
                 log.error('Gender formate is incorrect');
-                return utils.sendResponse(200, false, 'Gender formate is incorrect', ERROR_CODE.INVALID_INPUT, {});
+                return utils.sendResponse(200, false, 'Gender formate is incorrect', errcode.INVALID_INPUT, {});
             }
 
             if (args.resource.active !== "true" && args.resource.active !== "false") {
                 log.error('Invalid type, we accept only boolean\'s');
-                return utils.sendResponse(200, false, 'Invalid type, we accept only boolean\'s', ERROR_CODE.INVALID_INPUT, {});
+                return utils.sendResponse(200, false, 'Invalid type, we accept only boolean\'s', errcode.INVALID_INPUT, {});
             }
 
             let admin_result = null;
@@ -132,11 +135,11 @@ module.exports = {
                     admin_result = admin_res.msg;
                 } else {
                     log.info('Sorry! the user is not register yet');
-                    return utils.sendResponse(200, false, 'Sorry! the user is not register yet', ERROR_CODE.USER_FAILED, {});
+                    return utils.sendResponse(200, false, 'Sorry! the user is not register yet', errcode.USER_FAILED, {});
                 }
             } catch (DatabaseException) {
                 log.error('Database Error : ', DatabaseException);
-                return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, {});
+                return utils.sendResponse(200, false, 'Database Error', errcode.DATABASE_ERROR, {});
             }
 
             log.info('Admin Authorized : ', admin_result);
@@ -164,12 +167,12 @@ module.exports = {
 
             let result;
             try {
-                await _modules_._mongo_.connect();
+                await _mongo_.connect();
                 result = await new_developer.save();
-                _modules_._mongo_.close();
+                _mongo_.close();
                 if (result === null || result === "" || result.length === 0 || Object.keys(result).length === 0) {
                     log.info('Sorry! developer is not added');
-                    return utils.sendResponse(200, false, 'Sorry! developer is not added', ERROR_CODE.USER_FAILED, result)
+                    return utils.sendResponse(200, false, 'Sorry! developer is not added', errcode.USER_FAILED, result)
                 } else {
                     log.info('Developer added successfully');
 
@@ -206,12 +209,12 @@ module.exports = {
                         }
                     }
 
-                    return utils.sendResponse(200, true, 'Developer added successfully', ERROR_CODE.FOUND, new_result);
+                    return utils.sendResponse(200, true, 'Developer added successfully', errcode.FOUND, new_result);
                 }
             } catch (Exception) {
-                _modules_._mongo_.close();
+                _mongo_.close();
                 log.error(Exception);
-                return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, result);
+                return utils.sendResponse(200, false, 'Database Error', errcode.DATABASE_ERROR, result);
             }
         }
     },
@@ -227,13 +230,13 @@ module.exports = {
         for (let props in form_body) {
             if (mandatory_fields.test(props) === true && !Boolean(form_body[props])) {
                 log.info('Not found field: ' + props);
-                return utils.sendResponse(200, false, 'The mandatory fields are missing or not found', ERROR_CODE.FIELDS_NOT_FOUND, {});
+                return utils.sendResponse(200, false, 'The mandatory fields are missing or not found', errcode.FIELDS_NOT_FOUND, {});
             }
         }
 
         // fields validation
         if (parseInt(form_body.status) !== 1 && parseInt(form_body.status) !== 0) {
-            return utils.sendResponse(200, false, 'Invalid input', ERROR_CODE.INVALID_INPUT, {});
+            return utils.sendResponse(200, false, 'Invalid input', errcode.INVALID_INPUT, {});
         }
 
         if (!Boolean(form_body.language_id)) {
@@ -246,16 +249,16 @@ module.exports = {
             admin_result = await utils.authenticatAdminUser(form_body.adminId);
             if (admin_result.err_code === 10) {
                 log.info('Sorry! the user is not register yet');
-                return utils.sendResponse(200, false, 'Sorry! the user is not register yet', ERROR_CODE.USER_FAILED, {});
+                return utils.sendResponse(200, false, 'Sorry! the user is not register yet', errcode.USER_FAILED, {});
             }
         } catch (DatabaseError) {
             log.error('Database Error : ', DatabaseError);
-            return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, {});
+            return utils.sendResponse(200, false, 'Database Error', errcode.DATABASE_ERROR, {});
         }
 
         log.info('Admin Info : ', admin_result);
 
-        let new_langauge = new _modules_.languageSchema({
+        let new_langauge = new Schema.languageSchema({
             language_id: form_body.language_id,
             LanguageName: form_body.LanguageName,
             status: form_body.status,
@@ -266,12 +269,12 @@ module.exports = {
         });
 
         try {
-            _modules_._mongo_.connect();
+            _mongo_.connect();
             let result = await new_langauge.save();
-            _modules_._mongo_.close();
+            _mongo_.close();
             if (result == null || result === "") {
                 log.info('Sorry! language is not added', result);
-                return utils.sendResponse(200, true, 'Sorry! language is not added', ERROR_CODE.NOT_FOUND, result);
+                return utils.sendResponse(200, true, 'Sorry! language is not added', errcode.NOT_FOUND, result);
             } else {
                 log.info('New language is created successfully', result);
 
@@ -294,12 +297,12 @@ module.exports = {
                         createdDate: result.createdDate
                     }
                 }
-                return utils.sendResponse(200, true, 'New language is created successfully', ERROR_CODE.FOUND, new_result);
+                return utils.sendResponse(200, true, 'New language is created successfully', errcode.FOUND, new_result);
             }
         } catch (DatabaseError) {
-            _modules_._mongo_.close();
+            _mongo_.close();
             log.error(DatabaseError);
-            return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, {});
+            return utils.sendResponse(200, false, 'Database Error', errcode.DATABASE_ERROR, {});
         }
     },
     updateExistingLanguage: async function(A, args) {
@@ -314,13 +317,13 @@ module.exports = {
         for (let props in form_body) {
             if (mandatory_fields.test(props) === true && !Boolean(form_body[props])) {
                 log.info('Not found field: ' + props);
-                return utils.sendResponse(200, false, 'The mandatory fields are missing or not found', ERROR_CODE.FIELDS_NOT_FOUND, {});
+                return utils.sendResponse(200, false, 'The mandatory fields are missing or not found', errcode.FIELDS_NOT_FOUND, {});
             }
         }
 
         // fields validation
         if (parseInt(form_body.status) !== 1 && parseInt(form_body.status) !== 0) {
-            return utils.sendResponse(200, false, 'Invalid input', ERROR_CODE.INVALID_INPUT, {});
+            return utils.sendResponse(200, false, 'Invalid input', errcode.INVALID_INPUT, {});
         }
 
         // User validation
@@ -329,11 +332,11 @@ module.exports = {
             admin_result = await utils.authenticatAdminUser(form_body.adminId);
             if (admin_result.err_code === 10) {
                 log.info('Sorry! the user is not register yet');
-                return utils.sendResponse(200, false, 'Sorry! the user is not register yet', ERROR_CODE.USER_FAILED, {});
+                return utils.sendResponse(200, false, 'Sorry! the user is not register yet', errcode.USER_FAILED, {});
             }
         } catch (DatabaseError) {
             log.error('Database Error : ', DatabaseError);
-            return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, {});
+            return utils.sendResponse(200, false, 'Database Error', errcode.DATABASE_ERROR, {});
         }
 
         let update_language = {
@@ -345,12 +348,12 @@ module.exports = {
 
         let query = form_body._id.length > 20 ? { _id: ObjectId(form_body._id) } : { language_id: form_body._id }
         try {
-            _modules_._mongo_.connect();
-            let result = await _modules_.languageSchema.findOneAndUpdate(query, update_language, { new: true });
-            _modules_._mongo_.close();
+            _mongo_.connect();
+            let result = await Schema.languageSchema.findOneAndUpdate(query, update_language, { new: true });
+            _mongo_.close();
             if (result == null || result === "") {
                 log.info('Sorry! record is not updated', result);
-                return utils.sendResponse(200, true, 'Sorry! record is not updated', ERROR_CODE.NOT_FOUND, result);
+                return utils.sendResponse(200, true, 'Sorry! record is not updated', errcode.NOT_FOUND, result);
             } else {
                 let createdBy, updatedBy, created_by_result;
 
@@ -362,9 +365,9 @@ module.exports = {
 
                 } else {
                     updatedBy = utils.filterUserInfo(admin_result);
-                    _modules_._mongo_.connect();
-                    created_by_result = await _modules_.User.find({ _id: ObjectId(result.createdBy) });
-                    _modules_._mongo_.close();
+                    _mongo_.connect();
+                    created_by_result = await Schema.User.find({ _id: ObjectId(result.createdBy) });
+                    _mongo_.close();
                     if (created_by_result.length > 0) {
                         createdBy = utils.filterUserInfo(created_by_result);
                     } else {
@@ -383,12 +386,12 @@ module.exports = {
                         createdDate: result.createdDate
                     }
                 }
-                return utils.sendResponse(200, true, 'The record is updated successfully', ERROR_CODE.FOUND, new_result);
+                return utils.sendResponse(200, true, 'The record is updated successfully', errcode.FOUND, new_result);
             }
         } catch (DatabaseError) {
-            _modules_._mongo_.close();
+            _mongo_.close();
             log.error(DatabaseError);
-            return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, {});
+            return utils.sendResponse(200, false, 'Database Error', errcode.DATABASE_ERROR, {});
         }
     },
     createNewBug: async function(A, args) {
@@ -406,19 +409,19 @@ module.exports = {
         for (let props in form_body) {
             if (mandatory_fields.test(props) === true && !Boolean(form_body[props])) {
                 log.info('Not found field: ' + props);
-                return utils.sendResponse(200, false, 'The mandatory fields are missing or not found', ERROR_CODE.FIELDS_NOT_FOUND, {});
+                return utils.sendResponse(200, false, 'The mandatory fields are missing or not found', errcode.FIELDS_NOT_FOUND, {});
             }
         }
 
         // fields validation
         let bugs_status = new RegExp('^(open|closed|inprogress|NA|hold|delayed)$');
         if (!bugs_status.test(form_body.status)) {
-            return utils.sendResponse(200, false, 'The bug status is invalid', ERROR_CODE.INVALID_INPUT, {});
+            return utils.sendResponse(200, false, 'The bug status is invalid', errcode.INVALID_INPUT, {});
         }
 
         let priority_regex = new RegExp('^(low|high|medium)$');
         if (!priority_regex.test(form_body.priority)) {
-            return utils.sendResponse(200, false, 'The bug priority is invalid', ERROR_CODE.INVALID_INPUT, {});
+            return utils.sendResponse(200, false, 'The bug priority is invalid', errcode.INVALID_INPUT, {});
         }
 
         // User validation
@@ -431,11 +434,11 @@ module.exports = {
                     userIdentity = await utils.isUserAuthentic(form_body.resource_id);
                     if (userIdentity.err_code === 10) {
                         log.info('Sorry! the resource is not register yet');
-                        return utils.sendResponse(200, false, 'Sorry! the resource is not register yet', ERROR_CODE.USER_FAILED, {});
+                        return utils.sendResponse(200, false, 'Sorry! the resource is not register yet', errcode.USER_FAILED, {});
                     }
                 } catch (DatabaseError) {
                     log.error('Database Error : ', DatabaseError);
-                    return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, {});
+                    return utils.sendResponse(200, false, 'Database Error', errcode.DATABASE_ERROR, {});
                 }
 
                 break;
@@ -446,15 +449,15 @@ module.exports = {
                     userIdentity = await utils.authenticatAdminUser(form_body.assign_by);
                     if (userIdentity.err_code === 10) {
                         log.info('Sorry! the user is not register yet');
-                        return utils.sendResponse(200, false, 'Sorry! the user is not register yet', ERROR_CODE.USER_FAILED, {});
+                        return utils.sendResponse(200, false, 'Sorry! the user is not register yet', errcode.USER_FAILED, {});
                     }
                 } catch (DatabaseError) {
                     log.error('Database Error : ', DatabaseError);
-                    return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, {});
+                    return utils.sendResponse(200, false, 'Database Error', errcode.DATABASE_ERROR, {});
                 }
                 break;
             default:
-                return utils.sendResponse(200, false, 'Sorry! we can\'t identify the user identity', ERROR_CODE.USER_FAILED, {});
+                return utils.sendResponse(200, false, 'Sorry! we can\'t identify the user identity', errcode.USER_FAILED, {});
         }
 
         log.info('Resource Info : ', userIdentity);
@@ -462,18 +465,18 @@ module.exports = {
         // find language from language master
         let lanuage_mongo_id = null
         try {
-            let lang_result = await _modules_.languageSchema.find({"language_id": form_body.bug_type}).lean();
+            let lang_result = await Schema.languageSchema.find({"language_id": form_body.bug_type}).lean();
             if (lang_result.length === 0 || lang_result === "" || lang_result === null) {
-                return utils.sendResponse(200, false, 'Sorry! The bug type is not found in the system', ERROR_CODE.NOT_FOUND, {});
+                return utils.sendResponse(200, false, 'Sorry! The bug type is not found in the system', errcode.NOT_FOUND, {});
             } else {
                 lanuage_mongo_id = lang_result._id
             }
         } catch(DatabaseException) {
             log.info('Database Error : ', DatabaseException);
-            return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, {});
+            return utils.sendResponse(200, false, 'Database Error', errcode.DATABASE_ERROR, {});
         }   
 
-        let fresh_bug = new _modules_.bug({
+        let fresh_bug = new Schema.bug({
             bug_id: 'BG' + utils.randomId(),
             title: form_body.LanguageName,
             bug_description: form_body.status,
@@ -489,12 +492,12 @@ module.exports = {
         });
 
         try {
-            _modules_._mongo_.connect();
+            _mongo_.connect();
             let result = await fresh_bug.save();
-            _modules_._mongo_.close();
+            _mongo_.close();
             if (result == null || result === "") {
                 log.info('Sorry! the bug is not created due to system failure', result);
-                return utils.sendResponse(200, false, 'Sorry! the bug is not created due to system failure', ERROR_CODE.NOT_FOUND, result);
+                return utils.sendResponse(200, false, 'Sorry! the bug is not created due to system failure', errcode.NOT_FOUND, result);
             } else {
                 log.info('New bug is created successfully', result);
 
@@ -526,23 +529,24 @@ module.exports = {
                         createdDate: Date.now(),
                     }
                 }
-                return utils.sendResponse(200, true, 'New bug is created successfully', ERROR_CODE.FOUND, new_result);
+                return utils.sendResponse(200, true, 'New bug is created successfully', errcode.FOUND, new_result);
             }
         } catch (DatabaseError) {
-            _modules_._mongo_.close();
+            _mongo_.close();
             log.error(DatabaseError);
-            return utils.sendResponse(200, false, 'Database Error', ERROR_CODE.DATABASE_ERROR, {});
+            return utils.sendResponse(200, false, 'Database Error', errcode.DATABASE_ERROR, {});
         }
     },
 
     createNewTask: async (parent, args) => {
         // Fields validation of todo
-        let todo_body = args.task;
-
+        let todo_body = JSON.parse(JSON.stringify(args.task));
         let mandatory_fields = new RegExp('^(title|createdBy)$');
 
 
-        let todo = new _modules_.todo();
+
+
+        let todo = new Schema.todo();
     }
 }
 

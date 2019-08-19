@@ -13,6 +13,8 @@
 // Imports: Express
 const express = require('express');
 const bodyParser = require('body-parser');
+const log = require('./src/config/log_config');
+
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -20,7 +22,8 @@ app.use(bodyParser.json())
 
 // Imports: GraphQL
 const apolloServer = require('./src/schema/Schema.js');
-let _modules_ = require('./modules');
+let _mongo_ = require('./mongo-connect');
+
 require('dotenv').config() 
 
 // Middleware: GraphQL
@@ -31,13 +34,12 @@ apolloServer.applyMiddleware({
 // Express: Port
 const IP_ADDRESS = process.env.HOST;
 const PORT = process.env.PORT;
-let log = _modules_.log.log;
 
 // Express: Listener
 let server = app.listen(PORT, IP_ADDRESS || '127.0.0.1', () => {
   log.info(`The server has started on port: ${PORT}`);
   log.info(`http://${server.address().address}:${PORT}/graphql`);
-  log.info('Mongodb : '+ _modules_._mongo_.db_info());
+  log.info('Mongodb : '+ _mongo_.db_info());
 });
 
 console.log('app.js is loaded successfully');

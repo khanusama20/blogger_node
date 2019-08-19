@@ -1,18 +1,16 @@
 const _mongo_ = require('../../../mongo-connect');
-const util = require('../../utils/utility');
-
-const _modules_ = require('../../../modules')
-
-// Models
-// const User = require('../../models/User');
-
-// Mongoose callback convert to promise
+const utils = require('../../utils/utility');
+const _modules_ = require('../../../modules');
 const mongoose = require('mongoose');
+
+let appConfig = require('../../config/app_config');
+let log = require('../../config/log_config');
+
 mongoose.Promise = require('bluebird');
 
-let log = _modules_.log.log;
-let utils = _modules_.util;
-const ERROR_CODE = _modules_.ERR_CODE
+let errcode = appConfig.errcodes;
+let errmessage = appConfig.errmessages;
+
 
 module.exports = {
     // fetchAllUsers: async function(parent, args) {
@@ -62,15 +60,15 @@ module.exports = {
 
             if (result.length === 0) {
                 log.info('Sorry! we are not found any records');
-                return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.NOT_FOUND, result);
+                return utils.sendResponse(200, false, 'Sorry! we are not found any records', errcode.NOT_FOUND, result);
             } else {
                 log.info('Developer is found successfully');
                 result = { developer: result[0] };
-                return utils.sendResponse(200, true, 'Developer is found successfully', ERROR_CODE.FOUND, result);
+                return utils.sendResponse(200, true, 'Developer is found successfully', errcode.FOUND, result);
             }
         } catch (Exception) {
             log.error(Exception);
-            return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.DATABASE_ERROR, result);
+            return utils.sendResponse(200, false, 'Sorry! we are not found any records', errcode.DATABASE_ERROR, result);
         }
     },
     fetchAllResource: async function(parent, args, context, info) {
@@ -87,15 +85,15 @@ module.exports = {
 
             if (result.length === 0) {
                 log.info('Sorry! we are not found any records');
-                return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.NOT_FOUND, result);
+                return utils.sendResponse(200, false, 'Sorry! we are not found any records', errcode.NOT_FOUND, result);
             } else {
                 log.info('Developers found successfully');
                 let _result_ = { developer: result };
-                return utils.sendResponse(200, true, 'Developers found successfully', ERROR_CODE.FOUND, _result_);
+                return utils.sendResponse(200, true, 'Developers found successfully', errcode.FOUND, _result_);
             }
         } catch (Exception) {
             log.error(Exception);
-            return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.DATABASE_ERROR, result);
+            return utils.sendResponse(200, false, 'Sorry! we are not found any records', errcode.DATABASE_ERROR, result);
         }
     },
     fetchAllLanguages: async function(parent, args, context, info) {
@@ -112,7 +110,7 @@ module.exports = {
 
             if (result.length === 0) {
                 log.info('Sorry! we are not found any records');
-                return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.NOT_FOUND, result);
+                return utils.sendResponse(200, false, 'Sorry! we are not found any records', errcode.NOT_FOUND, result);
             } else {
                 log.info('Records found successfully');
                 let new_map_result = result.map(docs => {
@@ -121,11 +119,11 @@ module.exports = {
                     return docs
                 });
                 let _result_ = { language: new_map_result };
-                return utils.sendResponse(200, true, 'Records found successfully', ERROR_CODE.FOUND, _result_);
+                return utils.sendResponse(200, true, 'Records found successfully', errcode.FOUND, _result_);
             }
         } catch (Exception) {
             log.error(Exception);
-            return utils.sendResponse(200, false, 'Sorry! we are not found any records', ERROR_CODE.DATABASE_ERROR, result);
+            return utils.sendResponse(200, false, 'Sorry! we are not found any records', errcode.DATABASE_ERROR, result);
         }
     }
 }

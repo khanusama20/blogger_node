@@ -8,13 +8,14 @@ module.exports = {
 		}
 
 		type Todo {
-			title: String
+			title: String!
 			description: String
 			priority: String
 			createdDate: String
-			createdBy: Owner
+			createdBy: String!
+			isAdmin: Boolean
 			updatedDate: String
-			task_end_date: String
+			deadline: String
 			status: String
 		}
 
@@ -46,8 +47,8 @@ module.exports = {
 			title: String
 			description: String 
 			priority: String 
-			createdBy: InputOwner
-			task_end_date: String
+			createdBy: String
+			deadline: String
 			status: String
 		}
 
@@ -55,7 +56,7 @@ module.exports = {
 			title: String
 			description: String 
 			priority: String
-			task_end_date: String
+			deadline: String
 			status: String
 		}
 	`,

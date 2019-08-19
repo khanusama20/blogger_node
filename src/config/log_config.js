@@ -26,4 +26,4 @@ const LOGGER_CONFIG = {
 
 var log = bunyan.createLogger(LOGGER_CONFIG);
 
-module.exports.log = log
+module.exports = log

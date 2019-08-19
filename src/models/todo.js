@@ -5,9 +5,10 @@ let Todo = new mongoose.Schema({
     description: {type: String, default: null},
     priority: {type: String, default: 'low'},
     createdDate: {type: String, default: null},
-    createdBy: {type: mongoose.Mixed},
+    isAdmin: {type: Boolean, default: false},
+    createdBy: {type: mongoose.Schema.Types.ObjectId},
     updatedDate: {type: Number, default: null},
-    task_end_date: {type: Number, default: null},
+    deadline: {type: Number, default: null},
     status: {type: String, default: 'pending'}
 },{
     versionKey: false,
