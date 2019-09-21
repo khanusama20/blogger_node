@@ -35,6 +35,17 @@ const typeDefs = gql `
         contact: String!
     }
 
+    type Author {
+        name: String
+        age: Int
+        email: String
+        hobby: Hobby
+    }
+
+    type Hobby {
+        hobbie: String
+    }
+
     ${user.type}
     ${developer.type}
     ${language.type}
@@ -46,6 +57,8 @@ const typeDefs = gql `
         ${developer.queries}
         ${language.queries}
         ${todo.queries}
+
+        getAuthor: Author
     }
 
     ${user.input}

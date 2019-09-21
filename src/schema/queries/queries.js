@@ -11,7 +11,6 @@ mongoose.Promise = require('bluebird');
 let errcode = appConfig.errcodes;
 let errmessage = appConfig.errmessages;
 
-
 module.exports = {
     // fetchAllUsers: async function(parent, args) {
     //     console.log('Query : fetchAllUsers');
@@ -124,6 +123,14 @@ module.exports = {
         } catch (Exception) {
             log.error(Exception);
             return utils.sendResponse(200, false, 'Sorry! we are not found any records', errcode.DATABASE_ERROR, result);
+        }
+    },
+
+    getAuthor: function(parent, args, context, info) {
+        return {
+            name: "Rahul Soni",
+            age: 34,
+            email: "rahul@grr.la"
         }
     }
 }

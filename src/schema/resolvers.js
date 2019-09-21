@@ -12,6 +12,13 @@ const resolvers = {
         }
     },
     Query: queries, 
+    Author: {
+        hobby: function (parent, args, ctx, info) {
+            return {
+                hobbie: "Playing"
+            };
+        }
+    },
     Mutation: mutations 
 };
 // Exports statement
